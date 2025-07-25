@@ -12,10 +12,16 @@
         <PlannerSelector selected_planner="{selected_planner}" default_planner="GridBased" topic_name="planner_selector"/>
         <RateController hz="1.0">
           <RecoveryNode number_of_retries="1" name="ComputePathToPose">
-            <ComputePathToPose goal="{goal}" path="{path}" planner_id="{selected_planner}" error_code_id="{compute_path_error_code}" error_msg="{compute_path_error_msg}"/>
+            <Sequence>
+              <ClearEntireCostmap service_name="/global_costmap/clear_entirely_global_costmap"
+                        plugins="static_layer"/>
+
+              <ComputePathToPose goal="{goal}" path="{path}" planner_id="{selected_planner}" error_code_id="{compute_path_error_code}" error_msg="{compute_path_error_msg}"/>
+            </Sequence>
             <Sequence>
               <WouldAPlannerRecoveryHelp error_code="{compute_path_error_code}"/>
-              <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
+              <ClearEntireCostmap service_name="/global_costmap/clear_entirely_global_costmap"
+                                  plugins="static_layer"/>
             </Sequence>
           </RecoveryNode>
         </RateController>

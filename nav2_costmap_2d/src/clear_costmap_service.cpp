@@ -206,6 +206,7 @@ void ClearCostmapService::clearEntirely(const std::vector<std::string> & plugins
   if (plugins.empty()) {
     // Default behavior: clear all layers
     std::unique_lock<Costmap2D::mutex_t> lock(*(costmap_.getCostmap()->getMutex()));
+    RCLCPP_INFO(logger_, "Clearing all layers in costmap: %s", costmap_.getName().c_str()); 
     costmap_.resetLayers();
   } else {
     // Clear only specified plugins
@@ -214,6 +215,7 @@ void ClearCostmapService::clearEntirely(const std::vector<std::string> & plugins
     for (auto & layer : *layers) {
       if (shouldClearLayer(layer, plugins)) {
         if (layer->isClearable()) {
+          RCLCPP_INFO(logger_, "Clearing entire layer: %s", layer->getName().c_str());
           auto costmap_layer = std::static_pointer_cast<CostmapLayer>(layer);
           std::unique_lock<Costmap2D::mutex_t> lock(*(costmap_layer->getMutex())); 
           costmap_layer->resetMap(0, 0, costmap_layer->getSizeInCellsX(), costmap_layer->getSizeInCellsY());
